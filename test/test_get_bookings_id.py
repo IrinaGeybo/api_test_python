@@ -1,24 +1,25 @@
 from data.urls import Urls
-import pytest
 import requests
 from utils.validate import Validate
 from utils.schemas.get_booking_ids_schemas.response_schema import GetBookingIdsSchema
 from utils.assertions import Assertions
 from http import HTTPStatus
 import allure
-# https://restful-booker.herokuapp.com/apidoc/index.html#api-Booking-GetBookings
 
 
 class Test: 
 
-    urls= Urls
-    validate=Validate
-    assertion=Assertions
+    urls= Urls()
+    validate=Validate()
+    assertion=Assertions()
 
-    @allure.feature("Gets booking id")
-    @allure.story("Story gets booking id")
+    @allure.feature("Booking Management")
+    @allure.story("Get All Booking IDs")
     def test_get_booking_ids(self):
-        response=requests.get(self.urls.URL)
-        print(response.json())
-        self.validate.validate_list(self, response, GetBookingIdsSchema)
-        self.assertion.assert_status_code(self, response, HTTPStatus.OK)
+        with allure.step("Get server response"):
+            response = requests.get(self.urls.URL)
+        with allure.step("Verify that the server response status code is 200"):
+            self.assertion.assert_status_code(response, HTTPStatus.OK)
+        with allure.step("Verify that the response matches the expected JSON schema"):
+            self.validate.validate_list(response, GetBookingIdsSchema)
+

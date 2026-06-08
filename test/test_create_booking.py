@@ -1,24 +1,18 @@
-import requests
 from data.urls import Urls
-import pytest
 import requests
 from utils.validate import Validate
 from utils.assertions import Assertions
-from http import HTTPStatus
 from data.generator.booking_generator import BookingGenerator
-from utils.schemas.create_booking_data.request_schema import BookingDataRequestSchema
-import json
-from modules.base_module import BaseModule
-from modules.create_booking_data_module import CreateBookingDataModule
 from modules.create_booking_module import CreateBookingModule
 from dotenv import load_dotenv
 from utils.functions import generate_checkin_checkout_dates, generate_negative_checkin_dates
 from utils.schemas.create_booking_data.response_schema import BookingModel
 import allure
-
+from http import HTTPStatus
+#from utils.logger import log
+#from loguru import logger
 
 load_dotenv()
-
 
 
 class Test:
@@ -30,53 +24,60 @@ class Test:
     module = CreateBookingModule()
 
 
-
-    @allure.title("Create booking data. Do not use fixture. We check that the response scheme is correct.")
-    @allure.feature('Create booking data. Do not use fixture')
+    @allure.title("Create booking data. Do not use fixture.")
+    @allure.feature('Booking Management')
+    @allure.story('Create booking')
     def test_create_booking2(self):
-        checkin, checkout = generate_checkin_checkout_dates()
-        info=next(self.generator.generate_booking(checkin=checkin, checkout=checkout))
-        data = self.module.create_data(info=info)
-        response=requests.post("https://restful-booker.herokuapp.com/booking",
-        headers={
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        json=data
-        )
-        bookingid=response.json()["bookingid"]
-        print(f"Распечатываем ответ response.json() - {response.json()}")
-        print(f"Распечатываем bookingid - {bookingid}")
-        with allure.step("Проверяем схему ответа"):
+        with allure.step("Prepare dynamic booking data and dates"):
+            checkin, checkout = generate_checkin_checkout_dates()
+            info=next(self.generator.generate_booking(checkin=checkin, checkout=checkout))
+            data = self.module.create_data(info=info)
+        with allure.step("Get server response"):
+            response=requests.post(
+                url=f"{self.urls.URL}",
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                json=data
+            )
+        with allure.step("Verify that the server response status code is 200"):
+            self.assertion.assert_status_code(response, HTTPStatus.OK)
+        with allure.step("Verify that the response matches the expected JSON schema"):
             self.validate.validate(response, BookingModel)
 
 
 
-    @allure.title("Creating a booking data. In this test we use fixture.We check that the response scheme is correct.")
-    @allure.feature('Create booking')
-    def test_create_booking3(self, generate_correct_booking_data):
-        data=generate_correct_booking_data
-        print(f"Распечатываем data - {data}")
-        response = requests.post(self.urls.URL,
-            headers={
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-                },
+    @allure.title("Creating a booking data. In this test we use fixture.We check that the response schema is correct.")
+    @allure.feature('Booking Management')
+    @allure.story('Create booking')
+    def test_create_booking3(self, generate_booking_data):
+        data=generate_booking_data
+        with allure.step("Send a POST request to create a new booking and get server response"):
+            response = requests.post(
+                url=self.urls.URL,
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                    },
                 json=data
             )
-        bookingid = response.json()["bookingid"]
-        print(f"Распечатываем ответ response.json() - {response.json()}")
-        print(f"Распечатываем bookingid - {bookingid}")
-        with allure.step("Проверяем схему ответа"):
+        with allure.step("Verify that the server response status code is 200"):
+            self.assertion.assert_status_code(response, HTTPStatus.OK)
+        with allure.step("Verify that the response matches the expected JSON schema"):
             self.validate.validate(response, BookingModel)
 
 
 
     @allure.title("Creating a booking data. In this test we use fixture. Get_response_create_booking")
-    @allure.feature('Create booking')
+    @allure.feature('Booking Management')
+    @allure.story('Create booking')
     def test_create_booking4(self, get_response_create_booking):
-        response = get_response_create_booking
-        with allure.step("Проверяем схему ответа"):
+        with allure.step("Send a POST request to create a new booking and get server response"):
+            response = get_response_create_booking
+        with allure.step("Verify that the server response status code is 200"):
+            self.assertion.assert_status_code(response, HTTPStatus.OK)
+        with allure.step("Verify that the response matches the expected JSON schema"):
             self.validate.validate(response, BookingModel)
 
 

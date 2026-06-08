@@ -1,3 +1,4 @@
+import allure
 import pytest
 import requests
 import os
@@ -7,9 +8,8 @@ import random
 from utils.functions import generate_checkin_checkout_dates
 from data.generator.booking_generator import BookingGenerator
 from modules.create_booking_module import CreateBookingModule
-from data.generator.base_generator import BaseGenerator
-# после импортирования dotenv нашу функцию необходимо вызвать
 load_dotenv()
+from faker import Faker
 
 
 admin = os.environ.get("USERNAME_ADMIN")
@@ -17,6 +17,7 @@ password = os.environ.get("PASSWORD_ADMIN")
 urls=Urls()
 generator=BookingGenerator()
 module = CreateBookingModule()
+faker=Faker()
 
 @pytest.fixture
 def get_token():
@@ -44,7 +45,6 @@ def get_headers():
     return headers
 
 
-
 @pytest.fixture
 def get_booking_id():
     response = requests.get(
@@ -54,7 +54,7 @@ def get_booking_id():
     return random_book_id
 
 @pytest.fixture
-def generate_correct_booking_data():
+def generate_booking_data():
     checkin, checkout = generate_checkin_checkout_dates()
     info = next(generator.generate_booking(checkin=checkin, checkout=checkout))
     data = module.create_data(info=info)
@@ -62,14 +62,31 @@ def generate_correct_booking_data():
 
 
 @pytest.fixture
-def get_response_create_booking(generate_correct_booking_data):
-        data=generate_correct_booking_data
-        print(f"Распечатываем data - {data}")
-        response = requests.post(urls.URL,
+def get_response_create_booking(generate_booking_data):
+    data=generate_booking_data
+    response = requests.post(urls.URL,
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        json=data
+    )
+    return response
+
+
+@pytest.fixture
+def get_booking_id_after_creating_booking(generate_booking_data):
+    with allure.step("create the request body"):
+        data=generate_booking_data
+    with allure.step("Send a PUT request to update the reservation details"):
+        response = requests.post(
+            urls.URL,
             headers={
                 "Content-Type": "application/json",
                 "Accept": "application/json"
-                },
-                json=data
-            )
-        return response
+            },
+            json=data
+        )
+    with allure.step(f"Extract and save booking_id"):
+        booking_id = response.json()["bookingid"]
+    return booking_id
