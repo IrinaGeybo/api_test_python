@@ -5,8 +5,6 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  admin: ${{ secrets.ADMIN_USERNAME }}
-  password: ${{ secrets.ADMIN_PASSWORD }}
 
 jobs:
   test:
