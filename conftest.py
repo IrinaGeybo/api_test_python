@@ -12,8 +12,7 @@ load_dotenv()
 from faker import Faker
 
 
-admin = os.environ.get("USERNAME_ADMIN")
-password = os.environ.get("PASSWORD_ADMIN")
+
 urls=Urls()
 generator=BookingGenerator()
 module = CreateBookingModule()
@@ -21,6 +20,8 @@ faker=Faker()
 
 @pytest.fixture
 def get_token():
+    admin = os.getenv("USERNAME_ADMIN")
+    password = os.getenv("PASSWORD_ADMIN")
     data={
         "username": admin,
         "password": password
@@ -32,6 +33,8 @@ def get_token():
 
 @pytest.fixture
 def get_headers():
+    admin = os.getenv("USERNAME_ADMIN")
+    password = os.getenv("PASSWORD_ADMIN")
     data={
         "username": admin,
         "password": password
