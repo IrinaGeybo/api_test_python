@@ -17,13 +17,12 @@ urls=Urls()
 generator=BookingGenerator()
 module = CreateBookingModule()
 faker=Faker()
+admin = os.getenv("USERNAME_ADMIN")
+password = os.getenv("PASSWORD_ADMIN")
 
 
 @pytest.fixture
 def get_token():
-    admin = os.getenv("USERNAME_ADMIN")
-    password = os.getenv("PASSWORD_ADMIN")
-
     assert admin and password, "Критические переменные окружения USERNAME_ADMIN или PASSWORD_ADMIN не найдены!"
     data={
         "username": admin,
@@ -36,8 +35,6 @@ def get_token():
 
 @pytest.fixture
 def get_headers():
-    admin = os.getenv("USERNAME_ADMIN")
-    password = os.getenv("PASSWORD_ADMIN")
     data={
         "username": admin,
         "password": password
