@@ -38,5 +38,9 @@ jobs:
           python -m pip install -r requirements.txt
 
       - name: Run tests
+        env:
+          # Передаем секреты из GitHub в переменные окружения раннера
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
         run: pytest
 
