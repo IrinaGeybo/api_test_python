@@ -37,9 +37,7 @@ class TestUpdateBooking:
                     "Accept": "application/json"
                 }
             )
-        with allure.step("Verify that the server response status is 200 OK"):
-            self.assertion.assert_status_code(response, HTTPStatus.OK)
-        with allure.step("Verify that the response matches the expected JSON schema"):
-            self.validate.validate(response, UpdateBookingSchema)
+        self.assertion.assert_status_code(response, HTTPStatus.OK)
+        self.validate.validate(response, UpdateBookingSchema)
         with allure.step("Compare the sent payload and the server's entire response."):
             assert response.json() == data

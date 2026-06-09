@@ -18,8 +18,6 @@ class Test:
     def test_get_booking_ids(self):
         with allure.step("Get server response"):
             response = requests.get(self.urls.URL)
-        with allure.step("Verify that the server response status code is 200"):
-            self.assertion.assert_status_code(response, HTTPStatus.OK)
-        with allure.step("Verify that the response matches the expected JSON schema"):
-            self.validate.validate_list(response, GetBookingIdsSchema)
+        self.assertion.assert_status_code(response, HTTPStatus.OK)
+        self.validate.validate_list(response, GetBookingIdsSchema)
 

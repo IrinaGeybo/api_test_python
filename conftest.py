@@ -67,13 +67,15 @@ def generate_booking_data():
 @pytest.fixture
 def get_response_create_booking(generate_booking_data):
     data=generate_booking_data
-    response = requests.post(urls.URL,
-        headers={
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        },
-        json=data
-    )
+
+    with allure.step("Send a POST request to create a new booking"):
+        response = requests.post(urls.URL,
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            json=data
+        )
     return response
 
 

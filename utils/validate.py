@@ -1,9 +1,11 @@
 import requests
 from pydantic import TypeAdapter, ValidationError
+import allure
 
 
 
 class Validate:
+    @allure.step("Verify that the response matches the expected JSON schema")
     def validate(self, response, schema):
         try:
             schema.model_validate(response.json())
@@ -14,6 +16,7 @@ class Validate:
 # который позволяет использовать возможности
 # валидации Pydantic для типов, не являющихся BaseModel
 # (например, для списков, словарей, примитивов)
+    @allure.step("Verify that the response matches the expected JSON schema")
     def validate_list(self, response, schema):
         try:
             adapter = TypeAdapter(list[schema])

@@ -41,10 +41,8 @@ class Test:
                 },
                 json=data
             )
-        with allure.step("Verify that the server response status code is 200"):
-            self.assertion.assert_status_code(response, HTTPStatus.OK)
-        with allure.step("Verify that the response matches the expected JSON schema"):
-            self.validate.validate(response, BookingModel)
+        self.assertion.assert_status_code(response, HTTPStatus.OK)
+        self.validate.validate(response, BookingModel)
 
 
 
@@ -53,19 +51,16 @@ class Test:
     @allure.story('Create booking')
     def test_create_booking3(self, generate_booking_data):
         data=generate_booking_data
-        with allure.step("Send a POST request to create a new booking and get server response"):
-            response = requests.post(
-                url=self.urls.URL,
-                headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                    },
-                json=data
-            )
-        with allure.step("Verify that the server response status code is 200"):
-            self.assertion.assert_status_code(response, HTTPStatus.OK)
-        with allure.step("Verify that the response matches the expected JSON schema"):
-            self.validate.validate(response, BookingModel)
+        response = requests.post(
+            url=self.urls.URL,
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+                },
+            json=data
+        )
+        self.assertion.assert_status_code(response, HTTPStatus.OK)
+        self.validate.validate(response, BookingModel)
 
 
 
@@ -73,12 +68,9 @@ class Test:
     @allure.feature('Booking Management')
     @allure.story('Create booking')
     def test_create_booking4(self, get_response_create_booking):
-        with allure.step("Send a POST request to create a new booking and get server response"):
-            response = get_response_create_booking
-        with allure.step("Verify that the server response status code is 200"):
-            self.assertion.assert_status_code(response, HTTPStatus.OK)
-        with allure.step("Verify that the response matches the expected JSON schema"):
-            self.validate.validate(response, BookingModel)
+        response = get_response_create_booking
+        self.assertion.assert_status_code(response, HTTPStatus.OK)
+        self.validate.validate(response, BookingModel)
 
 
 

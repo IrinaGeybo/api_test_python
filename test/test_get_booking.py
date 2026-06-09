@@ -19,7 +19,5 @@ class Test:
             response=requests.get(
                 url=f"{self.urls.URL}/{get_booking_id}"
             )
-        with allure.step("Verify that the server response status code is 200"):
-            self.assertion.assert_status_code(response, HTTPStatus.OK)
-        with allure.step("Verify that the response matches the expected JSON schema"):
-            self.validate.validate(response, GetBookingResponseSchema)
+        self.assertion.assert_status_code(response, HTTPStatus.OK)
+        self.validate.validate(response, GetBookingResponseSchema)
