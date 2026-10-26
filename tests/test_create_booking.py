@@ -46,7 +46,7 @@ class Test:
 
 
 
-    @allure.title("Creating a booking data. In this test we use fixture.We check that the response schema is correct.")
+    @allure.title("Creating a booking data. In this tests we use fixture.We check that the response schema is correct.")
     @allure.feature('Booking Management')
     @allure.story('Create booking')
     def test_create_booking3(self, generate_booking_data):
@@ -64,7 +64,7 @@ class Test:
 
 
 
-    @allure.title("Creating a booking data. In this test we use fixture. Get_response_create_booking")
+    @allure.title("Creating a booking data. In this tests we use fixture. Get_response_create_booking")
     @allure.feature('Booking Management')
     @allure.story('Create booking')
     def test_create_booking4(self, get_response_create_booking):
